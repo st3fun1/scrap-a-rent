@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../includes/head.ejs', {pageTitle: pageTitle}) %>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <h1 class="text-center">Send data through email</h1>
+        </div>
+        <div class="col-xs-12">
+          <% if (typeof message !== 'undefined') { %>
+          <p class="<%= message.isError ? 'text-danger' : 'text-success' %>">
+            <%= message.text %>
+          </p>
+          <% } %>
+          <form action="" method="POST">
+            <button class="btn btn-primary" type="submit">
+              Send Latest data through email
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <%- include('../includes/scripts.ejs'); %> <%-
+  include('../includes/footer.ejs') %>
+</html>

@@ -4,7 +4,9 @@
   "description": "an app used to select rents based on some criterias from multiple data sources",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon ."
   },
   "repository": {
     "type": "git",
@@ -14,7 +16,6 @@
     "scrap",
     "rent"
   ],
-  "type": "module",
   "author": "Stefan Timosenco",
   "license": "ISC",
   "bugs": {
@@ -22,6 +23,18 @@
   },
   "homepage": "https://github.com/st3fun1/scrap-a-rent#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.10",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.6.2",
+    "puppeteer": "^10.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }

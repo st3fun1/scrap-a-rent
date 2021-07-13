@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./includes/head.ejs', {pageTitle: pageTitle}) %>
+  <body>
+    <h1>Scrap a rent</h1>
+    <p>Welcome to scrap a rent!</p>
+    <p class="server-date"></p>
+    <p>Current client date: <span class="date"></span></p>
+    <ul>
+      <li><a href="/send-mail">Send latest data through mail</a></li>
+      <li><a href="/data-source/imobiliare">Renting list</a></li>
+      <li><a href="/trigger-extraction">Trigger Extraction</a></li>
+    </ul>
+    <script>
+      let date = document.querySelector(".date");
+      date.innerHTML = new Date();
+      setInterval(() => {
+        date.innerHTML = new Date();
+      }, 1000);
+    </script>
+  </body>
+  <%- include('./includes/scripts.ejs'); %> <%- include('./includes/footer.ejs')
+  %>
+</html>
