@@ -1,0 +1,27 @@
+{
+  "name": "scrap-a-rent",
+  "version": "1.0.0",
+  "description": "an app used to select rents based on some criterias from multiple data sources",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/st3fun1/scrap-a-rent.git"
+  },
+  "keywords": [
+    "scrap",
+    "rent"
+  ],
+  "type": "module",
+  "author": "Stefan Timosenco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/st3fun1/scrap-a-rent/issues"
+  },
+  "homepage": "https://github.com/st3fun1/scrap-a-rent#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
