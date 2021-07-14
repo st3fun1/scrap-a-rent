@@ -4,8 +4,10 @@ import fs from "fs";
 import path from "path";
 import { fetchFromDataSource } from "./../data-sources.js";
 
-const cronValueimobiliareExtractionJob = "59 14 * * *";
-const cronValueImobiliareEmailSending = "20 15 * * *";
+const cronValueimobiliareExtractionJob =
+  process.env.JOB_EXTRACTION_CRON_VALUE || "59 14 * * *";
+const cronValueImobiliareEmailSending =
+  process.env.EMAIL_SENDING_CRON_VALUE || "20 15 * * *";
 
 export function imobiliareExtractionJob() {
   cron.schedule(cronValueimobiliareExtractionJob, async () => {
