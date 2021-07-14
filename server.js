@@ -16,7 +16,10 @@ imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
 
 app.get("/", (_req, res) => {
-  res.send(`<h1>Hello from ${APP_NAME}</h1>`);
+  res.send(`
+    <h1>Hello from ${APP_NAME}</h1>
+    <a href="/data-source/imobiliare">Go To Imobiliare Data</a>
+  `);
 });
 
 app.get("/data-source/:dataSource", async (req, res) => {

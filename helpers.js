@@ -10,6 +10,9 @@ export const renderData = ({ data, date }) => `
 <div class="container">
 <h1>Apartments as of date: ${date}</h1>
 ${data
+  .sort((a, b) => {
+    return parseInt(a.price) > parseInt(b.price) ? 1 : -1;
+  })
   .map((item) => {
     return `
 
