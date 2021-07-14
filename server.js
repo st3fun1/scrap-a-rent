@@ -39,6 +39,7 @@ app.get("/trigger-extraction", async (_req, res) => {
     return res.send(`
       <div>
         <h1>Data succesfully extracted</h1>
+        <p>Date: ${new Date()}</p>
         <a href="/data-source/imobiliare">Go To Imobiliare Data</a>
       </div>
     `);
