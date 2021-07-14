@@ -19,14 +19,22 @@ ${data
     <div class="item">
       <h2>${item.title}</h2>
       <div>Agentie: ${item.agency}</div>
-      <div>Localization: ${item.localization}</div>
-      <div>Caracteristici: ${item.characteristics}</div>
+      <div>Localization: ${
+        item.localization ? item.localization.trim() : ""
+      }</div>
+      <div>Caracteristici: ${
+        item.characteristics ? item.characteristics.trim() : ""
+      }</div>
       <div>Pret: ${item.price}</div>
       <a target="_blank" href="${item.link}">Link</a>
-      <div>${item.description.reduce(
-        (prev, current) => prev + "\n" + `<p>${current}</p>`,
-        ""
-      )}</div>
+      <div>${
+        item.description
+          ? item.description.reduce(
+              (prev, current) => prev + "\n" + `<p>${current}</p>`,
+              ""
+            )
+          : ""
+      }</div>
     </div>
   `;
   })

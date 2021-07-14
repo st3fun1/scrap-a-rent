@@ -4,24 +4,16 @@ import { fetchPageHTML } from "./helpers.js";
 export const RENT_EXTRACTORS = {
   imobiliare: async ($, _index, el) => {
     const link = $(el).find(".detalii-proprietate").attr("href");
+    const details = await getRentDetails(link);
     return {
       title: $(el).find(".titlu-anunt span").first().text(),
       agency: $(el).find(".logo-agentie img").attr("alt"),
       localization: $(el).find(".localizare p").text(),
       characteristics: getRentCharacteristics($, el),
-      price: getRentPrice($, $(el).find(".pret")),
       link,
-      description: await getDescription(link),
+      ...details,
     };
   },
-};
-
-const getRentPrice = ($, el) => {
-  return (
-    $(el).children(".pret-mare").text() +
-    " " +
-    $(el).children(".tva-luna").text()
-  );
 };
 
 const getRentCharacteristics = ($, parent) => {
@@ -32,25 +24,41 @@ const getRentCharacteristics = ($, parent) => {
       listOfCharacteristics.push($(el).text());
     });
 
-  return listOfCharacteristics.reduce((prev, current) => {
-    if (prev !== "") {
-      return prev + ", " + current;
-    }
-    return prev + current;
-  }, "");
+  return listOfCharacteristics
+    ? listOfCharacteristics.reduce((prev, current) => {
+        if (prev !== "") {
+          return prev + ", " + current;
+        }
+        return prev + current;
+      }, "")
+    : "";
 };
 
-const getDescription = async (link) => {
-  const paragraphs = [];
+const getRentDetails = async (link) => {
+  const details = {};
   if (link) {
     const html = await fetchPageHTML(link);
     const $ = await cheerio.load(html);
 
-    $("#b_detalii_text")
-      .find("p")
-      .each((index, el) => {
-        paragraphs.push($(el).text());
-      });
+    return {
+      description: getDescription($),
+      price: getRentPrice($),
+    };
   }
+
+  return details;
+};
+
+const getDescription = ($) => {
+  const paragraphs = [];
+  $("#b_detalii_text")
+    .find("p")
+    .each((_index, el) => {
+      paragraphs.push($(el).text());
+    });
   return paragraphs;
+};
+
+const getRentPrice = ($) => {
+  return $(".pret-cerut span").text();
 };

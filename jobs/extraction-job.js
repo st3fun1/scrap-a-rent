@@ -3,6 +3,7 @@ import cron from "node-cron";
 import fs from "fs";
 import path from "path";
 import { fetchFromDataSource } from "./../data-sources.js";
+import { getImobiliareData } from "../data-sources/imobiliare.js";
 
 const cronValueimobiliareExtractionJob =
   process.env.JOB_EXTRACTION_CRON_VALUE || "59 14 * * *";
@@ -12,19 +13,7 @@ const cronValueImobiliareEmailSending =
 export function imobiliareExtractionJob() {
   cron.schedule(cronValueimobiliareExtractionJob, async () => {
     console.log("Extracting Imobiliare Data....");
-    const data = await fetchFromDataSource(
-      dataSource ? dataSource.toUpperCase() : ""
-    );
-
-    fs.writeFile(
-      path.join(".", "data", `${dataSource.toUpperCase()}.json`),
-      JSON.stringify({ data }),
-      (err) => {
-        if (err) {
-          console.error("Couldn't create the data source file");
-        }
-      }
-    );
+    await getImobiliareData("imobiliare");
   });
 }
 
