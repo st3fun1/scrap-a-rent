@@ -7,6 +7,8 @@ export const getImobiliareData = async (dataSource) => {
     dataSource ? dataSource.toUpperCase() : ""
   );
 
+  console.log("data", data.length);
+
   fs.writeFile(
     path.join(".", "data", `${dataSource.toUpperCase()}.json`),
     JSON.stringify({ data }),

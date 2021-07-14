@@ -24,7 +24,6 @@ export async function fetchFromImobiliareStatic(items = [], currentPage = 1) {
   const htmlData = await fetchPageHTML(
     `${DATA_SOURCES.imobiliare}?pagina=${currentPage}`
   );
-  console.log("HTML DATA", htmlData ? "yes" : "no");
 
   const $ = cheerio.load(htmlData);
   let currentItems = items;
