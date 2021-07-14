@@ -1,4 +1,7 @@
 import fetch from "node-fetch";
+import fs from "fs";
+import path from "path";
+import util from "util";
 
 export const fetchPageHTML = async (url) => {
   return await fetch(url)
@@ -40,3 +43,22 @@ ${data
   })
   .reduce((prev, current) => prev + "\n" + current, "")}
 </div>`;
+
+export const getDataFromFile = async (dataSource) => {
+  let fileData = {
+    data: [],
+    date: "",
+  };
+  try {
+    const filePath = path.join(".", "data", `${dataSource.toUpperCase()}.json`);
+    console.log(JSON.parse(await util.promisify(fs.readFile)(filePath)));
+    fileData = {
+      data: JSON.parse(await util.promisify(fs.readFile)(filePath)).data,
+      date: new Date((await util.promisify(fs.stat)(filePath)).birthtime),
+    };
+  } catch (e) {
+    console.log("Could not get data from file", e);
+  }
+
+  return fileData;
+};

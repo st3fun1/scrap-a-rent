@@ -2,13 +2,11 @@ import { fetchFromDataSource } from "./../data-sources.js";
 import fs from "fs";
 import path from "path";
 
-const dir = "./data";
+const dir = "../data";
 export const getImobiliareData = async (dataSource) => {
   const data = await fetchFromDataSource(
     dataSource ? dataSource.toUpperCase() : ""
   );
-
-  console.log("data", data.length);
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
