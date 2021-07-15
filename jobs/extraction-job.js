@@ -32,10 +32,15 @@ export async function sendEmail() {
       from: "admin@scrap-a-rent.com",
       to: "stefantimosenco@gmail.com, danielaandries26@gmail.com",
       subject: "Imobiliare Data",
-      html: renderData({
+      html: `Salut, 
+      <p>Salut,\n
+      mai jos vei gasi ultimile garsoniere colectate:<p>
+      ${renderData({
         data: fileData.data.slice(0, 10),
         date: fileData.date,
-      }),
+      })}
+      <p>Pentru a vedea o lista completa click <a href="/data-source/imobiliare">aici</a></p>
+      `,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
