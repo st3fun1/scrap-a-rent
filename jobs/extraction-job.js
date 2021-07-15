@@ -18,11 +18,12 @@ export function imobiliareExtractionJob() {
 }
 
 export async function sendEmail() {
+  console.log("aaa", process.env.EMAIL_USER, process.env.EMAIL_PASSWORD);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.EMAIL_USER || "stefantimosenco23@gmail.com",
+      pass: process.env.EMAIL_PASSWORD || "hfaqczzkzfvvhjqb",
     },
   });
   transporter.verify().then(console.log).catch(console.error);
