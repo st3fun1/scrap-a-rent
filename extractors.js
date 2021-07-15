@@ -3,10 +3,14 @@ import { fetchPageHTML } from "./helpers.js";
 
 export const RENT_EXTRACTORS = {
   imobiliare: async ($, _index, el) => {
+    const title = $(el).find(".titlu-anunt span").first().text();
+    if (!title) {
+      return null;
+    }
     const link = $(el).find(".detalii-proprietate").attr("href");
     const details = await getRentDetails(link);
     return {
-      title: $(el).find(".titlu-anunt span").first().text(),
+      title,
       agency: $(el).find(".logo-agentie img").attr("alt"),
       localization: $(el).find(".localizare p").text(),
       characteristics: getRentCharacteristics($, el),

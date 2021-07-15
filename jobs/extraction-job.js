@@ -50,6 +50,8 @@ export async function sendEmail() {
   }
 }
 
+// vanzare-apartamente
+
 export function sendImobiliareDataThroughEmail() {
   cron.schedule(cronValueImobiliareEmailSending, () => {
     console.log("Sending Imobiliare Data....");

@@ -28,7 +28,10 @@ export async function fetchFromImobiliareStatic(items = [], currentPage = 1) {
   const $ = cheerio.load(htmlData);
   let currentItems = items;
   $(".box-anunt").each(async (i, el) => {
-    currentItems.push(await RENT_EXTRACTORS.imobiliare($, i, el));
+    const data = await RENT_EXTRACTORS.imobiliare($, i, el);
+    if (data) {
+      currentItems.push(data);
+    }
   });
 
   return fetchFromImobiliareStatic(currentItems, currentPage + 1);
