@@ -52,7 +52,7 @@ app.get("/trigger-extraction", async (_req, res) => {
 
 app.get("/send-mail", (_req, res) => {
   res.send(`
-  <h1> Send data through email </h1>
+    <h1>Send data through email</h1>
     <form action="" method="POST">
       <button type="submit">Send Latest data through email</button>
     </form>
@@ -60,15 +60,18 @@ app.get("/send-mail", (_req, res) => {
 });
 
 app.post("/send-mail", async (_req, res) => {
+  const createBody = (message, error) => `
+    <h1>Send data through email</h1>
+    <p style="color: ${error ? "red" : "green"}">${message}</p>
+    <form action="" method="POST">
+      <button type="submit">Send Latest data through email</button>
+    </form>
+  `;
   try {
     await sendEmail();
-    res.json({
-      message: "Success. Email sent!",
-    });
+    res.send(createBody("Success. The email has been sent!"));
   } catch (e) {
-    res.json({
-      message: "There has been an error sending the email",
-    });
+    res.send(createBody("Error. The email could not be sent!"), true);
   }
 });
 
