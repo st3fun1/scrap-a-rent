@@ -17,7 +17,7 @@ export function imobiliareExtractionJob() {
   });
 }
 
-async function sendEmail() {
+export async function sendEmail() {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -33,7 +33,7 @@ async function sendEmail() {
       to: "stefantimosenco@gmail.com, danielaandries26@gmail.com",
       subject: "Imobiliare Data",
       html: renderData({
-        data: fileData.data.slice(0, 4),
+        data: fileData.data.slice(0, 10),
         date: fileData.date,
       }),
     };

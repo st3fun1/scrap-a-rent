@@ -5,6 +5,7 @@ import { DATA_SOURCE_NAME } from "./data-sources.js";
 import { getDataFromFile, renderData } from "./helpers.js";
 import {
   imobiliareExtractionJob,
+  sendEmail,
   sendImobiliareDataThroughEmail,
 } from "./jobs/extraction-job.js";
 import { getImobiliareData } from "./data-sources/imobiliare.js";
@@ -46,6 +47,28 @@ app.get("/trigger-extraction", async (_req, res) => {
   } catch (e) {
     console.log(e);
     return res.status(500).send("<h1>Error. Could not extract the data!</h1>");
+  }
+});
+
+app.get("/send-mail", (_req, res) => {
+  res.send(`
+  <h1> Send data through email </h1>
+    <form action="" method="POST">
+      <button type="submit">Send Latest data through email</button>
+    </form>
+  `);
+});
+
+app.post("/send-mail", async (_req, res) => {
+  try {
+    await sendEmail();
+    res.json({
+      message: "Success. Email sent!",
+    });
+  } catch (e) {
+    res.json({
+      message: "There has been an error sending the email",
+    });
   }
 });
 
