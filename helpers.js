@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
 import util from "util";
+import { DATA_DIR } from "./constants.js";
 
 export const fetchPageHTML = async (url) => {
   return await fetch(url)
@@ -61,4 +62,10 @@ export const getDataFromFile = async (dataSource) => {
   }
 
   return fileData;
+};
+
+export const createDataFolder = () => {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR);
+  }
 };

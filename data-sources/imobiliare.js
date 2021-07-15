@@ -1,19 +1,18 @@
 import { fetchFromDataSource } from "./../data-sources.js";
 import fs from "fs";
 import path from "path";
+import { createDataFolder } from "../helpers.js";
+import { DATA_DIR } from "./../constants.js";
 
-const dir = "../data";
 export const getImobiliareData = async (dataSource) => {
   const data = await fetchFromDataSource(
     dataSource ? dataSource.toUpperCase() : ""
   );
 
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+  createDataFolder();
 
   fs.writeFile(
-    path.join(dir, `${dataSource.toUpperCase()}.json`),
+    path.join(DATA_DIR, `${dataSource.toUpperCase()}.json`),
     JSON.stringify({ data }),
     (err) => {
       if (err) {
