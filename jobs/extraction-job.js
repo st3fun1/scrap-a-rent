@@ -1,7 +1,9 @@
 import nodemailer from "nodemailer";
 import cron from "node-cron";
-import { getImobiliareData } from "../data-sources/imobiliare.js";
-import { getDataFromFile, renderData } from "../helpers.js";
+import { getDataFromSource } from "../data-sources/imobiliare.js";
+import { getDataFromFile } from "../helpers.js";
+import { APARTMENT_TEMPLATE, RENT_EMAIL_TEMPLATE } from "../email-templates.js";
+import { DATA_SOURCE_NAME } from "../data-sources.js";
 
 // TODO: application cleanup, use view template engine, use bootstrap for minimal styling, better architecture
 
@@ -13,11 +15,12 @@ const cronValueImobiliareEmailSending =
 export function imobiliareExtractionJob() {
   cron.schedule(cronValueimobiliareExtractionJob, async () => {
     console.log("Extracting Imobiliare Data....");
-    await getImobiliareData("imobiliare");
+    await getDataFromSource(DATA_SOURCE_NAME.IMOBILIARE);
+    await getDataFromSource(DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT);
   });
 }
 
-export async function sendEmail() {
+export async function sendEmail(template, type) {
   console.log("aaa", process.env.EMAIL_USER, process.env.EMAIL_PASSWORD);
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -28,29 +31,18 @@ export async function sendEmail() {
   });
   transporter.verify().then(console.log).catch(console.error);
   try {
-    const fileData = await getDataFromFile("imobiliare");
-    const mailOptions = {
-      from: "admin@scrap-a-rent.com",
-      to: "stefantimosenco@gmail.com, danielaandries26@gmail.com",
-      subject: "Imobiliare Data",
-      html: `Salut, 
-      <p>Salut,\n
-      mai jos vei gasi ultimile garsoniere colectate:<p>
-      ${renderData({
-        data: fileData.data.slice(0, 10),
-        date: fileData.date,
-      })}
-      <p>Pentru a vedea o lista completa click <a href="/data-source/imobiliare">aici</a></p>
-      `,
-    };
+    const fileData = await getDataFromFile(type);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
+    transporter.sendMail(
+      template(fileData.data, fileData.date),
+      function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
       }
-    });
+    );
   } catch (e) {
     console.log("error", e);
   }
@@ -61,6 +53,7 @@ export async function sendEmail() {
 export function sendImobiliareDataThroughEmail() {
   cron.schedule(cronValueImobiliareEmailSending, () => {
     console.log("Sending Imobiliare Data....");
-    sendEmail();
+    sendEmail(RENT_EMAIL_TEMPLATE);
+    sendEmail(APARTMENT_TEMPLATE);
   });
 }

@@ -12,7 +12,6 @@ export const fetchPageHTML = async (url) => {
 
 export const renderData = ({ data, date }) => `
 <div class="container">
-<h1>Apartments as of date: ${date}</h1>
 ${data
   .sort((a, b) => {
     return parseInt(a.price) > parseInt(b.price) ? 1 : -1;
@@ -22,7 +21,7 @@ ${data
 
     <div class="item">
       <h2>${item.title}</h2>
-      <div>Agentie: ${item.agency}</div>
+      ${item.agency ? `<div>Agentie: ${item.agency}</div>` : ""}
       <div>Localization: ${
         item.localization ? item.localization.trim() : ""
       }</div>

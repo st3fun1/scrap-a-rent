@@ -5,10 +5,12 @@ import { fetchPageHTML } from "./helpers.js";
 
 export const DATA_SOURCES = {
   imobiliare: "https://www.imobiliare.ro/inchirieri-garsoniere/iasi",
+  imobiliare_apartament: "https://www.imobiliare.ro/vanzare-apartamente/bacau",
 };
 
 export const DATA_SOURCE_NAME = {
   IMOBILIARE: "IMOBILIARE",
+  IMOBILIARE_APARTAMENT: "IMOBILIARE_APARTAMENT",
 };
 
 const MAX_SCRAPPED_PAGES = 8;
@@ -17,13 +19,15 @@ export async function fetchFromImobiliare() {
   return await goToPage(DATA_SOURCES.imobiliare);
 }
 
-export async function fetchFromImobiliareStatic(items = [], currentPage = 1) {
+export async function fetchFromImobiliareStatic(
+  url,
+  items = [],
+  currentPage = 1
+) {
   if (currentPage === MAX_SCRAPPED_PAGES) {
     return items;
   }
-  const htmlData = await fetchPageHTML(
-    `${DATA_SOURCES.imobiliare}?pagina=${currentPage}`
-  );
+  const htmlData = await fetchPageHTML(`${url}?pagina=${currentPage}`);
 
   const $ = cheerio.load(htmlData);
   let currentItems = items;
@@ -34,13 +38,15 @@ export async function fetchFromImobiliareStatic(items = [], currentPage = 1) {
     }
   });
 
-  return fetchFromImobiliareStatic(currentItems, currentPage + 1);
+  return fetchFromImobiliareStatic(url, currentItems, currentPage + 1);
 }
 
 export function fetchFromDataSource(datasource) {
   switch (datasource) {
     case DATA_SOURCE_NAME.IMOBILIARE:
-      return fetchFromImobiliareStatic();
+      return fetchFromImobiliareStatic(DATA_SOURCES.imobiliare);
+    case DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT:
+      return fetchFromImobiliareStatic(DATA_SOURCES.imobiliare_apartament);
     default:
       return Promise.reject({
         error: "This data source doesn't exist",

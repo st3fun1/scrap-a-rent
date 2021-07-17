@@ -3,6 +3,7 @@ import { config } from "dotenv";
 config();
 import path from "path";
 import { fileURLToPath } from "url";
+import bodyParser from "body-parser";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,7 +14,8 @@ import {
   sendEmail,
   sendImobiliareDataThroughEmail,
 } from "./jobs/extraction-job.js";
-import { getImobiliareData } from "./data-sources/imobiliare.js";
+import { getDataFromSource } from "./data-sources/imobiliare.js";
+import { APARTMENT_TEMPLATE, RENT_EMAIL_TEMPLATE } from "./email-templates.js";
 const app = express();
 const APP_NAME = "Scrap-a-Rent!";
 const PORT = process.env.PORT || 14161;
@@ -21,7 +23,9 @@ const PORT = process.env.PORT || 14161;
 imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
 
-app.get("/", (req, res) => {
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (_req, res) => {
   return res.sendFile(path.join(__dirname + "/index.html"));
 });
 
@@ -36,19 +40,51 @@ app.get("/data-source/:dataSource", async (req, res) => {
   });
 });
 
-app.get("/trigger-extraction", async (_req, res) => {
+app.get("/trigger-extraction", async (req, res) => {
+  const { error } = req.query;
+
+  const keys = Object.keys(DATA_SOURCE_NAME);
+
+  res.send(`
+    <h1>Trigger Data source extraction<h1>
+    <form action="/trigger-extraction" method="POST">
+      <label for="dataSource">Data Source</label>
+      <select name="dataSource" id="dataSource">
+      ${keys.map((key) => {
+        return `<option value="${DATA_SOURCE_NAME[key].toLowerCase()}">${
+          DATA_SOURCE_NAME[key]
+        }</option>`;
+      })}
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+  `);
+});
+
+app.post("/trigger-extraction", async (req, res) => {
+  const keys = Object.keys(DATA_SOURCE_NAME);
+
+  const { dataSource } = req.body;
+  const createBody = (error) => `
+    <h1>Trigger Data source extraction<h1>
+    ${error ? "There has been an error!" : "Success. Data gathered!"}
+    <form action="/trigger-extraction" method="POST">
+      <label for="dataSource">Data Source</label>
+      <select name="dataSource" id="dataSource">
+      ${keys.map((key) => {
+        return `<option value="${DATA_SOURCE_NAME[key].toLowerCase()}">${
+          DATA_SOURCE_NAME[key]
+        }</option>`;
+      })}
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+  `;
   try {
-    await getImobiliareData("imobiliare");
-    return res.send(`
-      <div>
-        <h1>Data succesfully extracted</h1>
-        <p>Date: ${new Date()}</p>
-        <a href="/data-source/imobiliare">Go To Imobiliare Data</a>
-      </div>
-    `);
+    await getDataFromSource(dataSource);
+    res.send(createBody(false));
   } catch (e) {
-    console.log(e);
-    return res.status(500).send("<h1>Error. Could not extract the data!</h1>");
+    res.send(createBody(true));
   }
 });
 
@@ -70,7 +106,8 @@ app.post("/send-mail", async (_req, res) => {
     </form>
   `;
   try {
-    await sendEmail();
+    sendEmail(RENT_EMAIL_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE);
+    sendEmail(APARTMENT_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT);
     res.send(createBody("Success. The email has been sent!"));
   } catch (e) {
     res.send(createBody("Error. The email could not be sent!"), true);
