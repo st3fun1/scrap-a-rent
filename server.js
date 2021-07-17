@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 config();
+import path from "path";
 import { DATA_SOURCE_NAME } from "./data-sources.js";
 import { getDataFromFile, renderData } from "./helpers.js";
 import {
