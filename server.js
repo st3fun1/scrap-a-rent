@@ -16,11 +16,8 @@ const PORT = process.env.PORT || 14161;
 imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
 
-app.get("/", (_req, res) => {
-  res.send(`
-    <h1>Hello from ${APP_NAME}</h1>
-    <a href="/data-source/imobiliare">Go To Imobiliare Data</a>
-  `);
+app.get("/", (req, res) => {
+  return res.sendFile(path.join(__dirname + "/index.html"));
 });
 
 app.get("/data-source/:dataSource", async (req, res) => {
