@@ -18,7 +18,7 @@ imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
 
 app.get("/", (req, res) => {
-  return res.sendFile(path.join(__dirname + "/index.html"));
+  return res.sendFile(path.join("." + "/index.html"));
 });
 
 app.get("/data-source/:dataSource", async (req, res) => {
