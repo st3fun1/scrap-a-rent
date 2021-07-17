@@ -2,6 +2,10 @@ import express from "express";
 import { config } from "dotenv";
 config();
 import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import { DATA_SOURCE_NAME } from "./data-sources.js";
 import { getDataFromFile, renderData } from "./helpers.js";
 import {
@@ -18,7 +22,7 @@ imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
 
 app.get("/", (req, res) => {
-  return res.sendFile(path.join("." + "/index.html"));
+  return res.sendFile(path.join(__dirname + "/index.html"));
 });
 
 app.get("/data-source/:dataSource", async (req, res) => {
