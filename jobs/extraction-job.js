@@ -53,7 +53,7 @@ export async function sendEmail(template, type) {
 export function sendImobiliareDataThroughEmail() {
   cron.schedule(cronValueImobiliareEmailSending, () => {
     console.log("Sending Imobiliare Data....");
-    sendEmail(RENT_EMAIL_TEMPLATE);
-    sendEmail(APARTMENT_TEMPLATE);
+    sendEmail(RENT_EMAIL_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE);
+    sendEmail(APARTMENT_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT);
   });
 }
