@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+const puppeteer = require("puppeteer");
 
 const browserLaunchOptions = {
   headless: process.env.HEADLESS,
@@ -6,33 +6,31 @@ const browserLaunchOptions = {
   ignoreHTTPSErrors: true,
 };
 
-export const startBrowser = async () => {
+const startBrowser = async () => {
   let browser;
   try {
-    console.log("Opening the browser.....");
     browser = await puppeteer.launch();
-  } catch (err) {
-    console.log("Could not create a browser instance => : ", err);
-  }
+  } catch (err) {}
   return browser;
 };
 
-export const goToPage = async (url) => {
+const goToPage = async (url) => {
   let data = [];
   try {
     const browser = await startBrowser({ headless: true });
     const page = await browser.newPage();
-    console.log(`Navigating to ${url}...`);
     await page.goto(url);
     // get all announcements
     data = await page.$$eval(".box-anunt", (items) => {
-      console.log("EVAl", items);
       return [{ ceva: "test" }];
     });
 
     browser.close();
-  } catch (e) {
-    console.error("ERROR", e);
-  }
+  } catch (e) {}
   return data;
+};
+
+module.exports = {
+  startBrowser,
+  goToPage,
 };

@@ -1,1 +1,3 @@
-export const DATA_DIR = "data";
+const DATA_DIR = "data";
+
+module.exports = { DATA_DIR };

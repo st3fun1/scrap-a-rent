@@ -1,9 +1,9 @@
-import nodemailer from "nodemailer";
-import cron from "node-cron";
-import { getDataFromSource } from "../data-sources/imobiliare.js";
-import { getDataFromFile } from "../helpers.js";
-import { APARTMENT_TEMPLATE, RENT_EMAIL_TEMPLATE } from "../email-templates.js";
-import { DATA_SOURCE_NAME } from "../data-sources.js";
+const nodemailer = require("nodemailer");
+const cron = require("node-cron");
+const { getDataFromSource } = require("../data-sources/imobiliare");
+const { getDataFromFile, cleanupList } = require("../helpers.js");
+const { DATA_SOURCE_NAME } = require("../data-sources");
+const { EMAIL_TEMPLATES } = require("../email-templates");
 
 // TODO: application cleanup, use view template engine, use bootstrap for minimal styling, better architecture
 
@@ -12,7 +12,7 @@ const cronValueimobiliareExtractionJob =
 const cronValueImobiliareEmailSending =
   process.env.EMAIL_SENDING_CRON_VALUE || "20 15 * * *";
 
-export function imobiliareExtractionJob() {
+function imobiliareExtractionJob() {
   cron.schedule(cronValueimobiliareExtractionJob, async () => {
     console.log("Extracting Imobiliare Data....");
     await getDataFromSource(DATA_SOURCE_NAME.IMOBILIARE);
@@ -20,8 +20,13 @@ export function imobiliareExtractionJob() {
   });
 }
 
-export async function sendEmail(template, type) {
-  console.log("aaa", process.env.EMAIL_USER, process.env.EMAIL_PASSWORD);
+async function sendEmail({ templateFunc, dataSource, config }) {
+  console.log(
+    "SEND MAIL WITH AUTH: ",
+    process.env.EMAIL_USER,
+    process.env.EMAIL_PASSWORD
+  );
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -29,31 +34,48 @@ export async function sendEmail(template, type) {
       pass: process.env.EMAIL_PASSWORD || "hfaqczzkzfvvhjqb",
     },
   });
-  transporter.verify().then(console.log).catch(console.error);
-  try {
-    const fileData = await getDataFromFile(type);
 
-    transporter.sendMail(
-      template(fileData.data, fileData.date),
-      function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + info.response);
-        }
-      }
+  transporter.verify().then(console.log).catch(console.error);
+
+  try {
+    const list = cleanupList((await getDataFromFile(dataSource)).data).slice(
+      0,
+      10
     );
+    if (!templateFunc) {
+      throw new Error(
+        "A template email function is required for sending an email!"
+      );
+    }
+    transporter.sendMail(await templateFunc(list), (error, info) => {
+      if (error) {
+        console.error("Error: \n", error);
+      }
+      if (info) {
+        console.log(`Success, email sent for ${dataSource}!`);
+      }
+    });
   } catch (e) {
-    console.log("error", e);
+    console.log("Error: \n", e);
   }
 }
 
-// vanzare-apartamente
-
-export function sendImobiliareDataThroughEmail() {
+function sendImobiliareDataThroughEmail() {
   cron.schedule(cronValueImobiliareEmailSending, () => {
     console.log("Sending Imobiliare Data....");
-    sendEmail(RENT_EMAIL_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE);
-    sendEmail(APARTMENT_TEMPLATE, DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT);
+    sendEmail({
+      templateFunc: EMAIL_TEMPLATES.getRentEmailTemplate,
+      dataSource: DATA_SOURCE_NAME.IMOBILIARE,
+    });
+    sendEmail({
+      templateFunc: EMAIL_TEMPLATES.getApartmentsEmailTemplate,
+      dataSource: DATA_SOURCE_NAME.IMOBILIARE_APARTAMENT,
+    });
   });
 }
+
+module.exports = {
+  sendImobiliareDataThroughEmail,
+  sendEmail,
+  imobiliareExtractionJob,
+};

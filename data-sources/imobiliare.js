@@ -1,10 +1,10 @@
-import { fetchFromDataSource } from "./../data-sources.js";
-import fs from "fs";
-import path from "path";
-import { createDataFolder } from "../helpers.js";
-import { DATA_DIR } from "./../constants.js";
+const { fetchFromDataSource } = require("./../data-sources");
+const fs = require("fs");
+const path = require("path");
+const { createDataFolder } = require("../helpers.js");
+const { DATA_DIR } = require("./../constants.js");
 
-export const getDataFromSource = async (dataSource) => {
+const getDataFromSource = async (dataSource) => {
   const data = await fetchFromDataSource(
     dataSource ? dataSource.toUpperCase() : ""
   );
@@ -16,9 +16,12 @@ export const getDataFromSource = async (dataSource) => {
     JSON.stringify({ data }),
     (err) => {
       if (err) {
-        console.log("error", err);
         console.error("Couldn't create the data source file");
       }
     }
   );
+};
+
+module.exports = {
+  getDataFromSource,
 };

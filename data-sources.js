@@ -1,29 +1,25 @@
-import cheerio from "cheerio";
-import { goToPage } from "./browser.js";
-import { RENT_EXTRACTORS } from "./extractors.js";
-import { fetchPageHTML } from "./helpers.js";
+const cheerio = require("cheerio");
+const { goToPage } = require("./browser");
+const { RENT_EXTRACTORS } = require("./extractors");
+const { fetchPageHTML } = require("./helpers");
 
-export const DATA_SOURCES = {
+const DATA_SOURCES = {
   imobiliare: "https://www.imobiliare.ro/inchirieri-garsoniere/iasi",
   imobiliare_apartament: "https://www.imobiliare.ro/vanzare-apartamente/bacau",
 };
 
-export const DATA_SOURCE_NAME = {
+const DATA_SOURCE_NAME = {
   IMOBILIARE: "IMOBILIARE",
   IMOBILIARE_APARTAMENT: "IMOBILIARE_APARTAMENT",
 };
 
 const MAX_SCRAPPED_PAGES = 8;
 
-export async function fetchFromImobiliare() {
+async function fetchFromImobiliare() {
   return await goToPage(DATA_SOURCES.imobiliare);
 }
 
-export async function fetchFromImobiliareStatic(
-  url,
-  items = [],
-  currentPage = 1
-) {
+async function fetchFromImobiliareStatic(url, items = [], currentPage = 1) {
   if (currentPage === MAX_SCRAPPED_PAGES) {
     return items;
   }
@@ -33,7 +29,8 @@ export async function fetchFromImobiliareStatic(
   let currentItems = items;
   $(".box-anunt").each(async (i, el) => {
     const data = await RENT_EXTRACTORS.imobiliare($, i, el);
-    if (data) {
+    // remove data that isn't valid
+    if (data && data.price) {
       currentItems.push(data);
     }
   });
@@ -41,7 +38,7 @@ export async function fetchFromImobiliareStatic(
   return fetchFromImobiliareStatic(url, currentItems, currentPage + 1);
 }
 
-export function fetchFromDataSource(datasource) {
+function fetchFromDataSource(datasource) {
   switch (datasource) {
     case DATA_SOURCE_NAME.IMOBILIARE:
       return fetchFromImobiliareStatic(DATA_SOURCES.imobiliare);
@@ -53,3 +50,11 @@ export function fetchFromDataSource(datasource) {
       });
   }
 }
+
+module.exports = {
+  fetchFromDataSource,
+  fetchFromImobiliareStatic,
+  fetchFromImobiliare,
+  DATA_SOURCE_NAME,
+  DATA_SOURCES,
+};

@@ -1,0 +1,13 @@
+<p>Salut, <%= targetPeople %>,</p>
+<p>mai jos vei gasi ultimile apartamente de vanzare colectate:</p>
+
+<p><%- include('../page-partials/data-source-list.ejs', {data: list}); %></p>
+
+<p>
+  Pentru a vedea o lista completa click
+  <a
+    style="color: blue; font-weight: bold; text-decoration: none"
+    href="<%= hostname %>/data-source/<%= dataSource %>"
+    >aici</a
+  >
+</p>

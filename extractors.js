@@ -1,7 +1,7 @@
-import cheerio from "cheerio";
-import { fetchPageHTML } from "./helpers.js";
+const cheerio = require("cheerio");
+const { fetchPageHTML } = require("./helpers");
 
-export const RENT_EXTRACTORS = {
+const RENT_EXTRACTORS = {
   imobiliare: async ($, _index, el) => {
     const title = $(el).find(".titlu-anunt span").first().text();
     if (!title) {
@@ -65,4 +65,8 @@ const getDescription = ($) => {
 
 const getRentPrice = ($) => {
   return $(".pret-cerut span").text();
+};
+
+module.exports = {
+  RENT_EXTRACTORS,
 };

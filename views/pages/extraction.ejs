@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../includes/head.ejs', {pageTitle: pageTitle}) %>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1>Trigger Data source extraction</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <% if (typeof message !== 'undefined') { %>
+          <p class="<%= message.isError ? 'text-danger' : 'text-success'%>">
+            <%= message.text %>
+          </p>
+          <% } %>
+        </div>
+        <div class="col-xs-12">
+          <form action="/trigger-extraction" method="POST">
+            <div class="form-group">
+              <label for="dataSource">Data Source</label>
+              <select name="dataSource" id="dataSource">
+                <% keys.forEach( function(key) { %>
+                <option value="<%= DATA_SOURCE_NAME[key].toLowerCase() %>">
+                  <%= DATA_SOURCE_NAME[key].toLowerCase() %>
+                </option>
+                <% }) %>
+              </select>
+            </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <%- include('../includes/scripts.ejs'); %> <%-
+  include('../includes/footer.ejs') %>
+</html>

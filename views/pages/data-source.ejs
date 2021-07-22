@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../includes/head.ejs', {pageTitle: pageTitle, cssFile:
+  'data-source.css'}) %>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 class="text-center">Data Source: <%= dataSource %></h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <% if (typeof message !== 'undefined') { %>
+          <p class="<%= message.isError ? 'text-danger' : 'text-success'%>">
+            <%= message.text %>
+          </p>
+          <% } %>
+        </div>
+      </div>
+      <%- include('../page-partials/data-source-list.ejs', {data}); %>
+    </div>
+  </body>
+  <%- include('../includes/scripts.ejs'); %> <%-
+  include('../includes/footer.ejs') %>
+</html>
