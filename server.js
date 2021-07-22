@@ -65,6 +65,33 @@ app.get("/data-source/:dataSource", async (req, res) => {
   return res.render("pages/data-source", templateData);
 });
 
+app.get("/trigger-extraction", async (req, res) => {
+  const keys = Object.keys(DATA_SOURCE_NAME);
+  const templateData = {
+    keys,
+    DATA_SOURCE_NAME,
+    message: {
+      text: "Success. The data has been extracted successfully!",
+      isError: false,
+    },
+  };
+
+  const { dataSource } = req.body;
+  try {
+    await getDataFromSource(dataSource);
+  } catch (e) {
+    templateData.message = {
+      text: "Error. The data could not be extracted. See logs!",
+      isError: true,
+    };
+  }
+
+  res.render("pages/extraction", {
+    ...templateData,
+    pageTitle: "Trigger Extraction",
+  });
+});
+
 app.post("/trigger-extraction", async (req, res) => {
   const keys = Object.keys(DATA_SOURCE_NAME);
   const templateData = {
