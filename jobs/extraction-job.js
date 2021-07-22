@@ -4,6 +4,7 @@ const { getDataFromSource } = require("../data-sources/imobiliare");
 const { getDataFromFile, cleanupList } = require("../helpers.js");
 const { DATA_SOURCE_NAME } = require("../data-sources");
 const { EMAIL_TEMPLATES } = require("../email-templates");
+require("dotenv").config();
 
 // TODO: application cleanup, use view template engine, use bootstrap for minimal styling, better architecture
 
@@ -30,8 +31,8 @@ async function sendEmail({ templateFunc, dataSource, config }) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER || "stefantimosenco23@gmail.com",
-      pass: process.env.EMAIL_PASSWORD || "hfaqczzkzfvvhjqb",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
