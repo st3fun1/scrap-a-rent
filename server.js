@@ -3,7 +3,12 @@ const bodyParser = require("body-parser");
 const { config } = require("dotenv");
 config();
 const { DATA_SOURCE_NAME } = require("./data-sources");
-const { getDataFromFile, basicAuth, triggerBasicAuth } = require("./helpers");
+const {
+  getDataFromFile,
+  basicAuth,
+  triggerBasicAuth,
+  cleanupList,
+} = require("./helpers");
 const {
   imobiliareExtractionJob,
   sendEmail,
@@ -49,10 +54,8 @@ app.get("/data-source/:dataSource", async (req, res) => {
   };
   if (dataSource && DATA_SOURCE_NAME.hasOwnProperty(dataSource.toUpperCase())) {
     try {
-      templateData.data = cleanupList(
-        (await getDataFromFile(dataSource)).data,
-        maxPrice
-      );
+      let fileData = (await getDataFromFile(dataSource)).data;
+      templateData.data = cleanupList(fileData, maxPrice);
     } catch (e) {
       templateData.message = {
         text: `Could not find/load data for the ${dataSource} data source.`,

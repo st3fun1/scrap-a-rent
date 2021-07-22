@@ -1,7 +1,7 @@
 const { DATA_SOURCE_NAME } = require("./data-sources");
 const moment = require("moment");
 const { getHTMLListOfData } = require("./helpers");
-const HOST_NAME = require("dotenv").config.HOST_NAME;
+const HOST_NAME = process.env.HOST_NAME;
 
 const EMAIL_TEMPLATES = {
   getRentEmailTemplate: async (list) => {
