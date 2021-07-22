@@ -19,17 +19,12 @@ const fetchPageHTML = async (url) => {
     .then((html) => html);
 };
 
-const getHTMLListOfData = async ({
-  list,
-  targetPeople,
-  hostname,
-  dataSource,
-}) =>
+const getHTMLListOfData = async ({ list, targetPeople, dataSource }) =>
   await ejs.renderFile(__dirname + "/views/emails/apartments.ejs", {
     list,
     targetPeople,
-    hostname,
     dataSource,
+    linkToMore: `${process.env.HOST_NAME}/data-source/${dataSource}`,
   });
 
 const getDataFromFile = async (dataSource) => {
@@ -57,6 +52,9 @@ const createDataFolder = () => {
 };
 
 function triggerBasicAuth(req, res, next) {
+  if (/data\-source/.test(req.path)) {
+    return next();
+  }
   if (
     !req.headers.authorization ||
     req.headers.authorization.indexOf("Basic ") === -1
@@ -75,6 +73,9 @@ async function basicAuth(req, res, next) {
   // }
 
   // check for basic auth header
+  if (/data\-source/.test(req.path)) {
+    return next();
+  }
   if (
     !req.headers.authorization ||
     req.headers.authorization.indexOf("Basic ") === -1
