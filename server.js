@@ -1,30 +1,28 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const { config } = require("dotenv");
 config();
 const { DATA_SOURCE_NAME } = require("./data-sources");
-const {
-  getDataFromFile,
-  renderData,
-  basicAuth,
-  triggerBasicAuth,
-} = require("./helpers");
+const { getDataFromFile, basicAuth, triggerBasicAuth } = require("./helpers");
 const {
   imobiliareExtractionJob,
   sendEmail,
   sendImobiliareDataThroughEmail,
 } = require("./jobs/extraction-job");
 const { getDataFromSource } = require("./data-sources/imobiliare");
-const {
-  APARTMENT_TEMPLATE,
-  RENT_EMAIL_TEMPLATE,
-  EMAIL_TEMPLATES,
-} = require("./email-templates");
+const { EMAIL_TEMPLATES } = require("./email-templates");
 const app = express();
 const APP_NAME = "Scrap-a-Rent!";
 const PORT = process.env.PORT || 14161;
 
 imobiliareExtractionJob();
 sendImobiliareDataThroughEmail();
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 app.set("views", "./views");
 app.set("view engine", "ejs");
@@ -76,16 +74,6 @@ app.get("/trigger-extraction", async (req, res) => {
     },
   };
 
-  const { dataSource } = req.body;
-  try {
-    await getDataFromSource(dataSource);
-  } catch (e) {
-    templateData.message = {
-      text: "Error. The data could not be extracted. See logs!",
-      isError: true,
-    };
-  }
-
   res.render("pages/extraction", {
     ...templateData,
     pageTitle: "Trigger Extraction",
@@ -102,10 +90,9 @@ app.post("/trigger-extraction", async (req, res) => {
       isError: false,
     },
   };
-
   const { dataSource } = req.body;
   try {
-    await getDataFromSource(dataSource);
+    getDataFromSource(dataSource);
   } catch (e) {
     templateData.message = {
       text: "Error. The data could not be extracted. See logs!",
